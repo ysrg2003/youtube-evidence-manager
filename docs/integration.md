@@ -159,3 +159,17 @@ order=relevance
 [4]: https://developers.google.com/youtube/v3/docs/captions/list "YouTube Data API captions.list"
 [5]: https://developers.google.com/youtube/v3/docs/captions/download "YouTube Data API captions.download"
 [6]: https://developers.google.com/youtube/v3/determine_quota_cost "YouTube Data API quota costs"
+
+## الاستخدام داخل مشروع آخر
+
+يمكن استهلاك النظام عبر خمسة حدود واضحة. الاستيراد الأصلي في Python يستخدم `EvidenceCollector` و`write_bundle` ويعيد bundle في الذاكرة. استدعاء CLI من runtime آخر يستخدم `python -m src.evidence_cli` ويعتمد على exit code والملفات الناتجة. يمكن أيضًا حقن `transcript_fetcher` مخصص عندما يملك المشروع المضيف مصدر captions مصرحًا به أو cache داخليًا. أما GitHub Actions فيُنقل كـ workflow يدوي مع Secrets وArtifacts، وليس كبديل عن اختبار unit المحلي.
+
+| حد التكامل | API أو الملف | مسؤولية المشروع المضيف |
+|---|---|---|
+| Python import | `src.evidence_manager.py` | البيئة، exceptions، التخزين، وحالة job |
+| CLI subprocess | `src.evidence_cli.py` | مسار Python المطلق، timeout، exit code، والتحقق من output |
+| Gemini analysis | `src.gemini_analyzer.py` | تفعيل opt-in، secret، ميزانية الطلب، والتحقق من JSON |
+| Vendored/submodule | commit معروف من المستودع | pin، update، compatibility، وrollback |
+| GitHub Actions | `.github/workflows/evidence.yml` | Secrets، Variables، inputs، artifact retention، والتشغيل اليدوي |
+
+المسار الكامل من إنشاء مشروع مضيف وتثبيت الاعتماديات إلى التشغيل والاختبار والـ rollback موثق في [programmatic-use.md](programmatic-use.md) و[reuse-in-another-project.md](reuse-in-another-project.md).

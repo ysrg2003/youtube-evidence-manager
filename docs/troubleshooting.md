@@ -90,3 +90,21 @@ git status --short
 ## متى نطلب مساعدة المستخدم؟
 
 نحتاج من المستخدم قيمة أو قرارًا فقط عندما لا يمكن استنتاجه بأمان، مثل اختيار Google Cloud project، إضافة `YOUTUBE_API_KEY` عبر GitHub Secret، أو اختيار فيديو اختبار عام. لا نطلب من المستخدم لصق المفاتيح في المحادثة أو في ملفات المشروع.
+
+## أخطاء دمج النظام داخل مشروع آخر
+
+| الحالة | السبب المحتمل | الإصلاح |
+|---|---|---|
+| `ModuleNotFoundError: src` | المشروع المضيف لا يشغّل Python من جذر المستودع أو لم يضف المصدر إلى import path | استخدم working directory صحيحًا، أو ثبت المستودع داخل `vendor/` ثم شغّل من الجذر، أو استخدم مسار package موثقًا |
+| CLI يعيد exit code غير صفري | input غير صالح، secret مفقود، أو فشل metadata | اقرأ stderr و`run.log`، ثم صحح السبب؛ لا تعتمد على stdout وحده |
+| الملفات لم تظهر بعد subprocess | العملية لم تنته، أو `cwd` خاطئ، أو `--output-dir` نسبي لمسار مختلف | انتظر `close`/exit code، استخدم مسار output مطلقًا أو اطبع المسار المحلول، وتحقق من `evidence.json` |
+| bundle جزئي | captions غير متاحة أو التعليقات مغلقة | اعتبره `partial` صالحًا للمراجعة، واقرأ `caption.status` و`limitations` بدل إعادة المحاولة بلا نهاية |
+| batch يعيد فيديوهات ناجحة | لا توجد state machine أو idempotency key | خزّن `video_id` وstatus ووقت الجمع، وتجاوز `complete` في التشغيل التالي |
+| التطبيق يطبع السر | logging أو exception غير منقح في المشروع المضيف | أوقف التشغيل ودوّر المفتاح، ثم احذف القيمة من logs والتاريخ إن لزم، واستخدم redaction قبل استئناف العمل |
+| فشل اختبار المشروع المضيف بسبب الإنترنت | الاختبار يستدعي YouTube أو Gemini مباشرة | استخدم fake client وحقن `transcript_fetcher`، واجعل live smoke يدويًا ومنفصلًا |
+| GitHub Actions يرى الكود القديم | Workflow يشير إلى branch/commit مختلف أو لم يُدفع الملف | تحقق من `actions/checkout` واسم الملف والفرع، ثم افتح **Actions → workflow → View workflow file** |
+| Artifact موجود لكنه فارغ | خطوة الجمع فشلت قبل الكتابة أو مسار الرفع غير صحيح | راجع `Collect evidence bundle` و`run.log`، وتأكد من `path: artifacts/evidence/` |
+
+## قرار إعادة المحاولة
+
+أعد المحاولة فقط عند timeout أو فشل شبكة عابر وبعد backoff محدود. لا تعِد المحاولة عند `keyInvalid` أو `accessNotConfigured` أو `quotaExceeded` أو input غير صالح قبل إصلاح الإعداد. عند فشل Gemini، احتفظ بـ `evidence.json` واعتبر `analysis` مرحلة مستقلة يمكن إعادة تشغيلها دون إعادة جمع المصدر.

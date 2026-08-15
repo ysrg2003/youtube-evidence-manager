@@ -35,10 +35,26 @@
 | `docs/integration.md` | فصل طبقات YouTube API وcaptions والتعليقات وGemini |
 | `docs/operations.md` | التشغيل، artifacts، CI، وسياسة التوقف |
 | `docs/troubleshooting.md` | الأخطاء الشائعة والاسترداد |
+| `docs/programmatic-use.md` | استخدام الوحدات من Python، الحقن، الأخطاء، والاختبار |
+| `docs/reuse-in-another-project.md` | دمج النظام في مشروع Python أو Node أو Go أو Workflow آخر |
 | `.env.example` | أسماء الأسرار مع placeholders فقط |
 | `.github/workflows/ci.yml` | compile واختبارات offline بلا أسرار أو quota |
 | `.github/workflows/evidence.yml` | تشغيل يدوي لجمع evidence وحفظ Artifacts |
 | `LEGACY_TRANSLATOR_README.md` | توثيق الأداة القديمة كما كان |
+
+## خريطة الاستخدام حسب الهدف
+
+| هدفك | ابدأ من |
+|---|---|
+| تشغيل أول مرة من الطرفية | [الخطوات الأولى](#الخطوة-1-تنزيل-المشروع-وإنشاء-البيئة) ثم [جمع evidence](#جمع-evidence-bundle-لفيديو-واحد) |
+| ترجمة captions إلى SRT | [أداة captions والترجمة](#الخطوة-3-تشغيل-أصغر-مثال-ناجح) |
+| جمع metadata وتعليقات وcaptions | [جمع evidence bundle](#جمع-evidence-bundle-لفيديو-واحد) |
+| تحليل bundle عبر Gemini | [تحليل Gemini](#تحليل-gemini-اختياريًا) |
+| استعمال النظام من Python | [`docs/programmatic-use.md`](docs/programmatic-use.md) |
+| دمجه في مشروع آخر أو لغة أخرى | [`docs/reuse-in-another-project.md`](docs/reuse-in-another-project.md) |
+| تشغيله من GitHub Actions | [التشغيل من GitHub Actions](#التشغيل-من-github-actions) |
+| معرفة الأسرار والـ rotation | [`docs/configuration.md`](docs/configuration.md) |
+| تشغيل batch أو خدمة طويلة | [`docs/operations.md`](docs/operations.md) و[`docs/reuse-in-another-project.md`](docs/reuse-in-another-project.md) |
 
 ## الخطوة 1: تنزيل المشروع وإنشاء البيئة
 
@@ -164,13 +180,16 @@ python -m unittest discover -s tests -v
 هذا هو المثال الآمن للتحقق من نقطة البداية. النتيجة المتوقعة:
 
 ```text
-Ran 5 tests
+Ran 13 tests
 OK
 ```
 
 إذا فشل الاختبار بسبب استيراد، أعد `python -m pip install -r requirements.txt` داخل البيئة الافتراضية. هذه الاختبارات لا تتحقق من صحة YouTube API key.
 
 ## استخدام عميل YouTube API من Python
+
+للاستخدام البرمجي الكامل، بما في ذلك `EvidenceCollector` و`write_bundle` و`GeminiAnalyzer` وحقن transcript مخصص واختبارات الدمج، راجع [دليل الاستخدام البرمجي](docs/programmatic-use.md). ولدمج النظام في مشروع آخر، راجع [دليل إعادة الاستخدام](docs/reuse-in-another-project.md).
+
 
 بعد إعداد `.env`، يمكن استدعاء العميل للقراءة العامة. هذا المثال لا يطبع المفتاح ولا يكتب نتيجة في Git:
 

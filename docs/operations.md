@@ -100,3 +100,27 @@ git log --oneline -5
 ```
 
 ثم أعد الفرع محليًا إلى commit معروف قبل التعديل فقط بعد حفظ أي عمل مطلوب، أو أصلح commit جديدًا بدل force-push. لا تستخدم `git push --force` على `main`.
+
+## اختيار نمط التشغيل المناسب
+
+استخدم هذا الجدول قبل بناء automation أو مشروع مضيف حتى لا تخلط بين مسؤوليات الطبقات:
+
+| السيناريو | النمط الموصى به | نقطة التحقق |
+|---|---|---|
+| تجربة فيديو واحد من جهاز المطور | `python -m src.evidence_cli` | وجود `evidence.json` و`evidence.md` |
+| الحصول على كائن Python وتخصيص العملية | `EvidenceCollector` و`write_bundle` | assertions على `schema_version` و`caption.status` |
+| تطبيق Node أو Go أو Java | subprocess يستدعي CLI بمسار Python ثابت | exit code يساوي 0 والملفات موجودة |
+| خدمة ويب أو worker | backend job مع state machine وتخزين خاص | `job_id` وحالة `complete` أو `partial` |
+| batch بحثي محدود | حلقة Python مع limits وحفظ حالة كل video ID | عدم إعادة العناصر الناجحة |
+| تشغيل يدوي دون جهاز محلي | Workflow `Collect YouTube evidence` | نجاح خطوات validation والجمع ورفع Artifact |
+| CI لكل Pull Request | Workflow `CI` | compile وoffline tests دون Secrets أو quota |
+
+التفاصيل التنفيذية للاستخدام البرمجي موجودة في [programmatic-use.md](programmatic-use.md)، أما دمج النظام في مشروع آخر أو runtime آخر فموثق في [reuse-in-another-project.md](reuse-in-another-project.md).
+
+## عقد نجاح أي integration
+
+لا تعتبر ظهور رسالة progress نجاحًا. يعتبر integration ناجحًا فقط عندما يحقق جميع الشروط المناسبة لنمطه: exit code صحيح أو عدم وجود exception غير معالج، ملف أو response قابل للقراءة، `video_id` و`source_url` متطابقان، `collected_at` موجود، وحالة captions والتعليقات موثقة حتى عند النقص. إذا كان التحليل مفعّلًا، يجب أن يكون `analysis.json` JSON صالحًا وأن يحتوي على الحقول المنظمة قبل عرضه للمستخدم.
+
+## الاستئناف والتنظيف
+
+عند توقف batch أو worker، احتفظ بـ `video_id` و`status` وسبب الفشل ووقت المحاولة. أعد تشغيل العناصر ذات الأخطاء العابرة فقط. لا تعِد طلبًا انتهى بـ `quotaExceeded` أو `keyInvalid` قبل إصلاح السبب. احذف `artifacts/` و`output/` عندما تنتهي الحاجة إليها إذا كانت النصوص أو التعليقات حساسة، وتحقق من عدم وجودها في `git status` قبل commit.
