@@ -224,7 +224,7 @@ PY
 
 يعمل corpus workflow يدويًا فقط من **Actions → Collect corpus YouTube evidence → Run workflow**. يقرأ `testdata/corpus_manifest.json`، يبحث عن عدد محدود من النتائج لكل مقال، يختار المرشح الأعلى تطابقًا من العنوان والوصف، ثم يجمع metadata وcaptions وتعليقات عامة محدودة. لا يشغّل Reddit، ولا ينشر المقالات، ولا يكتب فوق ملفات المقالات.
 
-لأول تشغيل آمن، استخدم `max_articles=1` أو `5`، و`search_results=5`، و`max_comments=10`، و`max_comment_pages=1`، واجعل `analyze=false`. بعد فحص artifact، يمكن تشغيل دفعة أكبر. البحث يستهلك حصة YouTube لكل مقال، لذلك لا تستخدم `--no-resume` أو تعيد تشغيل corpus بلا سبب.
+لأول تشغيل آمن، استخدم `max_articles=1` أو `5`، و`search_results=5`، و`min_score=2`، و`max_comments=10`، و`max_comment_pages=1`، واجعل `analyze=false`. بعد فحص artifact، يمكن تشغيل دفعة أكبر. إذا لم يصل أي فيديو إلى `min_score`، يسجل النظام `no_qualified_candidate` بدل جمع دليل ضعيف. البحث يستهلك حصة YouTube لكل مقال، لذلك لا تستخدم `--no-resume` أو تعيد تشغيل corpus بلا سبب.
 
 الـ artifact يحتوي عادةً على `corpus_results.json` و`corpus_results.md`، وداخل كل `article_XXX/` ملفي `evidence.json` و`evidence.md`. إذا فعّلت `analyze=true` سيحاول Gemini تحليل bundle بعد حفظه؛ فشل Gemini لا يمحو evidence، ويظهر كـ `analysis_status=failed` في state.
 

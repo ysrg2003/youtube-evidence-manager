@@ -13,6 +13,11 @@ on:
         required: false
         default: "5"
         type: string
+      min_score:
+        description: "Minimum relevance score for selecting a video"
+        required: false
+        default: "2"
+        type: string
       max_comments:
         description: "Maximum top-level public comments per selected video"
         required: false
@@ -87,6 +92,7 @@ jobs:
         env:
           MAX_ARTICLES: ${{ inputs.max_articles }}
           SEARCH_RESULTS: ${{ inputs.search_results }}
+          MIN_SCORE: ${{ inputs.min_score }}
           MAX_COMMENTS: ${{ inputs.max_comments }}
           MAX_COMMENT_PAGES: ${{ inputs.max_comment_pages }}
           SKIP_COMMENTS: ${{ inputs.skip_comments }}
@@ -100,6 +106,7 @@ jobs:
             --output-dir artifacts/corpus-evidence
             --max-articles "$MAX_ARTICLES"
             --search-results "$SEARCH_RESULTS"
+            --min-score "$MIN_SCORE"
             --max-comments "$MAX_COMMENTS"
             --max-comment-pages "$MAX_COMMENT_PAGES"
           )

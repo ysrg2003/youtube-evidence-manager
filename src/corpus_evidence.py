@@ -70,6 +70,11 @@ def is_quota_error(message: str) -> bool:
     return "quotaexceeded" in lowered or "quota exceeded" in lowered or "daily limit" in lowered
 
 
+def is_terminal_gemini_error(message: str) -> bool:
+    lowered = message.lower()
+    return any(marker in lowered for marker in ("permission_denied", "api key", "http 401", "http 403", "keyinvalid"))
+
+
 def load_manifest(path: Path) -> list[dict[str, Any]]:
     data = json.loads(path.read_text(encoding="utf-8"))
     articles = data.get("articles") if isinstance(data, dict) else None
@@ -140,8 +145,30 @@ def run(args: argparse.Namespace) -> int:
         article_id = int(article["article_id"])
         key = str(article_id)
         previous = state.get(key)
-        if args.resume and isinstance(previous, dict) and previous.get("status") in {"complete", "partial", "no_search_results"}:
+        if args.resume and isinstance(previous, dict) and previous.get("status") in {"complete", "partial", "no_search_results", "no_qualified_candidate"}:
+            if args.analyze and previous.get("status") in {"complete", "partial"} and previous.get("analysis_status") != "complete":
+                evidence_path = Path(str(previous.get("evidence_json", "")))
+                if evidence_path.exists():
+                    try:
+                        bundle = json.loads(evidence_path.read_text(encoding="utf-8"))
+                        analysis = analyzer.analyze(bundle) if analyzer is not None else None
+                        if analysis is not None:
+                            analysis_json, analysis_markdown = write_analysis(analysis, evidence_path.parent)
+                            previous["analysis_status"] = "complete"
+                            previous["analysis_json"] = str(analysis_json)
+                            previous["analysis_markdown"] = str(analysis_markdown)
+                    except GeminiAPIError as exc:
+                        previous["analysis_status"] = "failed"
+                        previous["analysis_error"] = str(exc)
+                        results.append(previous)
+                        state[key] = previous
+                        state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                        if is_quota_error(str(exc)) or is_terminal_gemini_error(str(exc)):
+                            stopped_reason = f"Gemini terminal error at article {article_id}"
+                            break
             results.append(previous)
+            state[key] = previous
+            state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             continue
 
         base = {
@@ -169,6 +196,17 @@ def run(args: argparse.Namespace) -> int:
         base["candidates"] = candidates[: args.search_results]
         if selected is None:
             result = {**base, "status": "no_search_results", "finished_at": utc_now()}
+            results.append(result)
+            state[key] = result
+            state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            continue
+        if selected.get("score", 0) < args.min_score:
+            result = {
+                **base,
+                "status": "no_qualified_candidate",
+                "finished_at": utc_now(),
+                "quality_note": f"best candidate score {selected.get('score', 0)} is below min_score {args.min_score}",
+            }
             results.append(result)
             state[key] = result
             state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -217,8 +255,8 @@ def run(args: argparse.Namespace) -> int:
                 except GeminiAPIError as exc:
                     result["analysis_status"] = "failed"
                     result["analysis_error"] = str(exc)
-                    if is_quota_error(str(exc)):
-                        stopped_reason = f"Gemini quota error at article {article_id}"
+                    if is_quota_error(str(exc)) or is_terminal_gemini_error(str(exc)):
+                        stopped_reason = f"Gemini terminal error at article {article_id}"
                         results.append(result)
                         state[key] = result
                         break
@@ -250,6 +288,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", default="artifacts/corpus-evidence")
     parser.add_argument("--max-articles", type=int, default=50)
     parser.add_argument("--search-results", type=int, default=5)
+    parser.add_argument("--min-score", type=int, default=2, help="Minimum candidate relevance score")
     parser.add_argument("--max-comments", type=int, default=10)
     parser.add_argument("--max-comment-pages", type=int, default=1)
     parser.add_argument("--skip-comments", action="store_true")
