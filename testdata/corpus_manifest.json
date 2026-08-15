@@ -15,7 +15,7 @@
         "software systems"
       ],
       "search_description": "A first-person field note on why smaller sections and explicit checkpoints make vibe-coded projects easier to change.",
-      "youtube_query": "The Vibe Coding Trap Why Building Everything at Once Made My Project Harder to Fix",
+      "youtube_query": "The Vibe Coding Trap Why Building Everything at Once Made My Project Harder to Fix vibe coding AI-assisted development software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -31,7 +31,7 @@
         "Software Design"
       ],
       "search_description": "Smaller files make AI-assisted projects easier to understand, verify, change, and recover. Here is why responsibility boundaries matter more than file count.",
-      "youtube_query": "Why Smaller Files Are Easier to Trust",
+      "youtube_query": "Why Smaller Files Are Easier to Trust AI-Assisted Building Modular Projects software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -47,7 +47,7 @@
         "Vibe Coding"
       ],
       "search_description": "A practical method for building AI-assisted projects one verified section at a time instead of generating the entire system in one request.",
-      "youtube_query": "Build One Working Section Before You Add the Next",
+      "youtube_query": "Build One Working Section Before You Add the Next AI-Assisted Building Modular Projects software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -63,7 +63,7 @@
         "Change Management"
       ],
       "search_description": "Why projects built all at once become expensive to change, and how smaller boundaries reduce the cost of the next decision.",
-      "youtube_query": "The Cost of Changing a Project You Built All at Once",
+      "youtube_query": "The Cost of Changing a Project You Built All at Once AI-Assisted Building Vibe Coding software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -79,7 +79,7 @@
         "Modular Projects"
       ],
       "search_description": "A practical structure for writing precise change requests to an AI coding assistant without inviting an uncontrolled rewrite.",
-      "youtube_query": "How to Write a Better Change Request for an AI Coding Assistant",
+      "youtube_query": "How to Write a Better Change Request for an AI Coding Assistant AI-Assisted Building Prompting software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -95,7 +95,7 @@
         "AI-assisted development"
       ],
       "search_description": "How to decide when a feature should become a reusable module without abstracting it before the repeated problem is understood.",
-      "youtube_query": "The Reusable System Test When Should a Feature Become Its Own Module",
+      "youtube_query": "The Reusable System Test When Should a Feature Become Its Own Module reusable systems modular code software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -111,7 +111,7 @@
         "Solo Building"
       ],
       "search_description": "Why an AI-generated first version should be treated as evidence of a working path, not as proof that the entire system is finished.",
-      "youtube_query": "The First Working Version Is Not the Finished System",
+      "youtube_query": "The First Working Version Is Not the Finished System AI-Assisted Building Vibe Coding software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -127,7 +127,7 @@
         "Project Systems"
       ],
       "search_description": "The minimum project context to document before asking an AI coding assistant to modify a real system.",
-      "youtube_query": "What to Document Before Asking AI to Change Your Project",
+      "youtube_query": "What to Document Before Asking AI to Change Your Project AI-Assisted Building Documentation software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -143,7 +143,7 @@
         "Vibe Coding"
       ],
       "search_description": "A practical verification method for AI-generated project sections using inputs, outputs, boundaries, and deliberate failure cases.",
-      "youtube_query": "How to Verify an AI-Generated Section Without Reading Everything",
+      "youtube_query": "How to Verify an AI-Generated Section Without Reading Everything AI-Assisted Building Testing software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -159,7 +159,7 @@
         "Modular Projects"
       ],
       "search_description": "How solo builders can choose a small, useful architecture for AI-assisted projects without creating premature complexity.",
-      "youtube_query": "The Smallest Useful Architecture for a Solo Builder",
+      "youtube_query": "The Smallest Useful Architecture for a Solo Builder AI-Assisted Building Architecture software engineering AI coding architecture",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -175,7 +175,7 @@
         "Practical AI"
       ],
       "search_description": "How to choose a first automation that is small, observable, and useful instead of complex, impressive, and fragile.",
-      "youtube_query": "The Best First Automation Is Usually Not the Most Impressive One",
+      "youtube_query": "The Best First Automation Is Usually Not the Most Impressive One Automation & Systems Workflows workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -191,7 +191,7 @@
         "Systems Thinking"
       ],
       "search_description": "A practical method for finding hidden waiting time in a workflow before deciding what to automate.",
-      "youtube_query": "How to Find Waiting Time Inside a Workflow",
+      "youtube_query": "How to Find Waiting Time Inside a Workflow Automation & Systems Workflow Design workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -207,7 +207,7 @@
         "Editorial Process"
       ],
       "search_description": "The checkpoints an automated content pipeline needs before its output can be trusted by a human reader.",
-      "youtube_query": "What an Automated Content Pipeline Actually Needs to Verify",
+      "youtube_query": "What an Automated Content Pipeline Actually Needs to Verify Automation & Systems Content Systems workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -223,7 +223,7 @@
         "Solo Building"
       ],
       "search_description": "Why completing a workflow manually before automating it can reveal hidden decisions, exceptions, and requirements.",
-      "youtube_query": "Manual First Automated Second A Safer Way to Build Workflows",
+      "youtube_query": "Manual First Automated Second A Safer Way to Build Workflows Automation & Systems Workflow Design workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -239,7 +239,7 @@
         "Practical AI"
       ],
       "search_description": "How to recognize when automation adds more maintenance and uncertainty than the repeated task it was meant to remove.",
-      "youtube_query": "When Automation Adds Complexity Instead of Removing It",
+      "youtube_query": "When Automation Adds Complexity Instead of Removing It Automation & Systems Workflow Design workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -255,7 +255,7 @@
         "Solo Building"
       ],
       "search_description": "A practical framework for turning repeated work into a reusable system without hiding judgment or creating premature complexity.",
-      "youtube_query": "Turning Repeated Work Into a Reusable System",
+      "youtube_query": "Turning Repeated Work Into a Reusable System Automation & Systems Reusable Workflows workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -271,7 +271,7 @@
         "Systems Thinking"
       ],
       "search_description": "Why a script is not the same as a reliable workflow, and what extra structure a repeated system needs.",
-      "youtube_query": "The Difference Between a Script and a Workflow",
+      "youtube_query": "The Difference Between a Script and a Workflow Automation & Systems Scripts workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -287,7 +287,7 @@
         "Editorial Review"
       ],
       "search_description": "How to design a human checkpoint that catches meaningful errors without becoming a slow, vague approval step.",
-      "youtube_query": "How to Design a Human Checkpoint That Actually Helps",
+      "youtube_query": "How to Design a Human Checkpoint That Actually Helps Automation & Systems Human-in-the-Loop workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -303,7 +303,7 @@
         "Systems Thinking"
       ],
       "search_description": "The practical metrics to track before deciding whether an automation is actually improving a workflow.",
-      "youtube_query": "What to Measure Before Calling an Automation Successful",
+      "youtube_query": "What to Measure Before Calling an Automation Successful Automation & Systems Measurement workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -319,7 +319,7 @@
         "Workflow Design"
       ],
       "search_description": "A practical guide to keeping small automated systems observable through status, artifacts, logs, and clear failure messages.",
-      "youtube_query": "How to Keep an Automated System Observable",
+      "youtube_query": "How to Keep an Automated System Observable Automation & Systems Observability workflow automation systems engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -336,7 +336,7 @@
         "verification"
       ],
       "search_description": "How to trace a failure through input, transformation, external dependency, output, and display before asking an AI assistant to patch the feature.",
-      "youtube_query": "Root-Cause Debugging for AI-Built Projects Start With the Failure Not the Feature",
+      "youtube_query": "Root-Cause Debugging for AI-Built Projects Start With the Failure Not the Feature AI coding debugging software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -352,7 +352,7 @@
         "Systems Thinking"
       ],
       "search_description": "A simple method for separating visible symptoms from root causes when debugging AI-assisted projects.",
-      "youtube_query": "Symptom or Root Cause A Simple Debugging Split",
+      "youtube_query": "Symptom or Root Cause A Simple Debugging Split Root-Cause Debugging AI-Built Projects software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -368,7 +368,7 @@
         "Software Design"
       ],
       "search_description": "Why patches at the wrong layer can hide the original failure and create new problems in AI-assisted projects.",
-      "youtube_query": "Why Fixing the Visible Error Can Create a Bigger One",
+      "youtube_query": "Why Fixing the Visible Error Can Create a Bigger One Root-Cause Debugging Debugging software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -384,7 +384,7 @@
         "Diagnostics"
       ],
       "search_description": "How to design a small diagnostic test that narrows the location of a failure before changing the system.",
-      "youtube_query": "The Smallest Test That Can Tell You Where the Failure Is",
+      "youtube_query": "The Smallest Test That Can Tell You Where the Failure Is Root-Cause Debugging Testing software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -400,7 +400,7 @@
         "Debugging"
       ],
       "search_description": "A practical prompt structure for making an AI assistant investigate the correct layer before applying a debugging patch.",
-      "youtube_query": "How to Keep an AI Assistant From Patching the Wrong Layer",
+      "youtube_query": "How to Keep an AI Assistant From Patching the Wrong Layer Root-Cause Debugging AI-Assisted Building software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -416,7 +416,7 @@
         "Project Systems"
       ],
       "search_description": "A checkpoint-based debugging workflow for projects that are difficult to change without creating new failures.",
-      "youtube_query": "A Checkpoint-Based Workflow for Fragile Projects",
+      "youtube_query": "A Checkpoint-Based Workflow for Fragile Projects Root-Cause Debugging Checkpoints software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -432,7 +432,7 @@
         "Systems Thinking"
       ],
       "search_description": "A lightweight failure-record format for learning from broken AI-assisted projects instead of repeating the same debugging cycle.",
-      "youtube_query": "What to Record After a Failure So You Do Not Repeat It",
+      "youtube_query": "What to Record After a Failure So You Do Not Repeat It Root-Cause Debugging Failure Analysis software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -448,7 +448,7 @@
         "AI-Built Projects"
       ],
       "search_description": "A practical method for investigating systems that work intermittently by recording state, timing, dependencies, and reproducible conditions.",
-      "youtube_query": "Debugging a System That Works Only Sometimes",
+      "youtube_query": "Debugging a System That Works Only Sometimes Root-Cause Debugging Intermittent Bugs software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -464,7 +464,7 @@
         "AI-Built Projects"
       ],
       "search_description": "How to determine whether a code change created a new failure or merely changed the way an existing failure appears.",
-      "youtube_query": "The Difference Between a New Error and an Old Error With a New Mask",
+      "youtube_query": "The Difference Between a New Error and an Old Error With a New Mask Root-Cause Debugging Error Analysis software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -480,7 +480,7 @@
         "AI-Built Projects"
       ],
       "search_description": "How to decide when repeated patches cost more than rebuilding one small responsibility inside an AI-assisted project.",
-      "youtube_query": "When to Stop Debugging and Rebuild One Section",
+      "youtube_query": "When to Stop Debugging and Rebuild One Section Root-Cause Debugging Modular Projects software debugging root cause engineering",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -497,7 +497,7 @@
         "small systems"
       ],
       "search_description": "What Xiangqi Lab taught me about building a small automated media system without confusing early views with a final business conclusion.",
-      "youtube_query": "What Building Xiangqi Lab Taught Me About Small Automated Systems",
+      "youtube_query": "What Building Xiangqi Lab Taught Me About Small Automated Systems Xiangqi automation xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -513,7 +513,7 @@
         "Measurement"
       ],
       "search_description": "What three early Xiangqi Lab videos can reveal about a new channel—and what they cannot prove yet.",
-      "youtube_query": "What Three Early Xiangqi Lab Videos Can and Cannot Tell Me",
+      "youtube_query": "What Three Early Xiangqi Lab Videos Can and Cannot Tell Me Xiangqi Lab Field Notes xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -529,7 +529,7 @@
         "Field Notes"
       ],
       "search_description": "Lessons from building Xiangqi Lab around a specialized cultural topic and creating a clear entry point for new viewers.",
-      "youtube_query": "Building an Educational Channel Around a Specialized Cultural Topic",
+      "youtube_query": "Building an Educational Channel Around a Specialized Cultural Topic Xiangqi Lab Educational Content xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -545,7 +545,7 @@
         "Field Notes"
       ],
       "search_description": "The hidden stages behind an automated Xiangqi video, and why production automation must preserve review and recovery.",
-      "youtube_query": "The Hidden Work Behind an Automated Video",
+      "youtube_query": "The Hidden Work Behind an Automated Video Xiangqi Lab Automation & Systems xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -561,7 +561,7 @@
         "Content Experiments"
       ],
       "search_description": "How to study early organic reach for a specialized channel without confusing a small sample with a final judgment.",
-      "youtube_query": "Why Organic Reach Is a Measurement Problem Before It Is a Motivation Problem",
+      "youtube_query": "Why Organic Reach Is a Measurement Problem Before It Is a Motivation Problem Xiangqi Lab Organic Reach xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -577,7 +577,7 @@
         "Automation"
       ],
       "search_description": "What Xiangqi Lab teaches about extracting a useful project feature into a reusable system without abstracting it too early.",
-      "youtube_query": "From Project Feature to Reusable System A Xiangqi Lab Case",
+      "youtube_query": "From Project Feature to Reusable System A Xiangqi Lab Case Xiangqi Lab Reusable Systems xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -593,7 +593,7 @@
         "Lessons Learned"
       ],
       "search_description": "The design decisions I would reconsider if I rebuilt the Xiangqi Lab system today, and why the lessons matter beyond one project.",
-      "youtube_query": "What I Would Change If I Rebuilt the System Today",
+      "youtube_query": "What I Would Change If I Rebuilt the System Today Xiangqi Lab Field Notes xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -609,7 +609,7 @@
         "Culture"
       ],
       "search_description": "How modern AI tools can support Xiangqi education while preserving accuracy, context, and human judgment.",
-      "youtube_query": "Teaching a Traditional Game With Modern AI Tools",
+      "youtube_query": "Teaching a Traditional Game With Modern AI Tools Xiangqi Lab AI-Assisted Building xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -625,7 +625,7 @@
         "Educational Content"
       ],
       "search_description": "Why Xiangqi Lab should automate production steps while preserving human judgment about accuracy, teaching, and audience trust.",
-      "youtube_query": "The Difference Between Automating Production and Automating Judgment",
+      "youtube_query": "The Difference Between Automating Production and Automating Judgment Xiangqi Lab Automation & Systems xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -641,7 +641,7 @@
         "Automation & Systems"
       ],
       "search_description": "How Xiangqi Lab can become a testable system by turning content, production, and audience questions into small experiments.",
-      "youtube_query": "How a Small Media Project Becomes a Testable System",
+      "youtube_query": "How a Small Media Project Becomes a Testable System Xiangqi Lab Field Notes xiangqi education creator content systems",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -658,7 +658,7 @@
         "online business"
       ],
       "search_description": "A first-person framework for building reusable digital assets from repeated problems without selling passive-income guarantees.",
-      "youtube_query": "Digital Assets Without the Passive-Income Fantasy",
+      "youtube_query": "Digital Assets Without the Passive-Income Fantasy digital assets ethical monetization digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -674,7 +674,7 @@
         "Solo Building"
       ],
       "search_description": "Why a digital asset is not truly reusable when it still depends on daily manual rescue, support, or hidden creator knowledge.",
-      "youtube_query": "A Digital Asset Is Not Passive When It Still Needs Rescue Every Day",
+      "youtube_query": "A Digital Asset Is Not Passive When It Still Needs Rescue Every Day Digital Assets Ethical Monetization digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -690,7 +690,7 @@
         "Product Design"
       ],
       "search_description": "How to tell whether a digital product is merely a template or a reusable system with inputs, outputs, instructions, and failure handling.",
-      "youtube_query": "The Difference Between a Template and a Real System",
+      "youtube_query": "The Difference Between a Template and a Real System Digital Assets Templates digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -706,7 +706,7 @@
         "Solo Building"
       ],
       "search_description": "A practical method for discovering a digital product idea by observing repeated problems instead of guessing what people want to buy.",
-      "youtube_query": "How to Build an Asset Around a Repeated Problem",
+      "youtube_query": "How to Build an Asset Around a Repeated Problem Digital Assets Product Discovery digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -722,7 +722,7 @@
         "Content Systems"
       ],
       "search_description": "Why distribution, explanation, and trust are part of a digital product rather than tasks to postpone until after creation.",
-      "youtube_query": "Why Distribution Is Part of the Product",
+      "youtube_query": "Why Distribution Is Part of the Product Digital Assets Distribution digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -738,7 +738,7 @@
         "Trust"
       ],
       "search_description": "A practical definition of ethical monetization for digital assets, affiliate recommendations, and uncertain outcomes.",
-      "youtube_query": "What Ethical Monetization Means When Results Are Uncertain",
+      "youtube_query": "What Ethical Monetization Means When Results Are Uncertain Digital Assets Ethical Monetization digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -754,7 +754,7 @@
         "Ethical Monetization"
       ],
       "search_description": "How to choose a first small digital asset from a workflow that already works, without building a large product too early.",
-      "youtube_query": "The First Small Asset I Would Build From a Working Workflow",
+      "youtube_query": "The First Small Asset I Would Build From a Working Workflow Digital Assets Reusable Systems digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -770,7 +770,7 @@
         "Reusable Systems"
       ],
       "search_description": "How to convert a root-cause debugging habit into a practical worksheet while preserving reasoning and judgment.",
-      "youtube_query": "How to Turn a Debugging Habit Into a Worksheet",
+      "youtube_query": "How to Turn a Debugging Habit Into a Worksheet Digital Assets Root-Cause Debugging digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -786,7 +786,7 @@
         "Ethical Monetization"
       ],
       "search_description": "A practical standard for recommending SaaS tools through affiliate links without turning every article into a sales page.",
-      "youtube_query": "When an Affiliate Recommendation Is Actually Useful",
+      "youtube_query": "When an Affiliate Recommendation Is Actually Useful Digital Assets Affiliate Marketing digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     },
     {
@@ -802,7 +802,7 @@
         "Solo Building"
       ],
       "search_description": "How to build a small digital product whose first purpose is learning whether a repeated problem deserves a larger solution.",
-      "youtube_query": "Build the Smallest Product That Can Teach You Something",
+      "youtube_query": "Build the Smallest Product That Can Teach You Something Digital Assets Product Experiments digital products workflow ethical monetization",
       "evidence_policy": "discover_public_video_then_collect_metadata_caption_and_limited_comments"
     }
   ]

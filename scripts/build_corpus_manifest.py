@@ -22,7 +22,15 @@ def build(index: Path, corpus_dir: Path, output: Path) -> None:
         subtitle = subtitle_match.group(1).strip() if subtitle_match else ''
         search_description = description_match.group(1).strip() if description_match else ''
         labels = [item.strip() for item in (labels_match.group(1).split(',') if labels_match else []) if item.strip()]
-        query = re.sub(r'[^A-Za-z0-9\s&-]', ' ', title)
+        section_hints = {
+            'AI-Assisted Building': 'software engineering AI coding architecture',
+            'Automation & Systems': 'workflow automation systems engineering',
+            'Root-Cause Debugging': 'software debugging root cause engineering',
+            'Xiangqi Lab': 'xiangqi education creator content systems',
+            'Digital Assets Without Hype': 'digital products workflow ethical monetization',
+        }
+        query = ' '.join([title, *labels[:2], section_hints.get(section, '')])
+        query = re.sub(r'[^A-Za-z0-9\s&-]', ' ', query)
         query = re.sub(r'\s+', ' ', query).strip()
         rows.append({
             'article_id': int(map_id),

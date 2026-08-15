@@ -32,7 +32,17 @@ def tokens(value: str) -> set[str]:
 
 
 def candidate_score(article: dict[str, Any], item: dict[str, Any]) -> tuple[int, int]:
-    article_tokens = tokens(f"{article.get('title', '')} {article.get('section', '')}")
+    article_tokens = tokens(
+        " ".join(
+            [
+                str(article.get("title", "")),
+                str(article.get("subtitle", "")),
+                str(article.get("search_description", "")),
+                str(article.get("section", "")),
+                " ".join(article.get("labels", []) or []),
+            ]
+        )
+    )
     snippet = item.get("snippet") or {}
     title = str(snippet.get("title") or "")
     description = str(snippet.get("description") or "")
