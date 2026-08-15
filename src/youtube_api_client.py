@@ -9,7 +9,10 @@ import os
 from typing import Any, Iterable
 
 import requests
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 API_ROOT = "https://www.googleapis.com/youtube/v3"
 DEFAULT_TIMEOUT = 30.0

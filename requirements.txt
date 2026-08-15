@@ -1,4 +1,5 @@
 requests>=2.31,<3
+python-dotenv>=1.0,<2
 youtube-transcript-api>=1.0,<2
 yt-dlp>=2024.1
 # Optional only when using the legacy subtitle-translation CLI:

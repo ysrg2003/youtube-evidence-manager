@@ -2,27 +2,43 @@
 
 مستودع خاص لجمع أدلة بحثية من YouTube بطريقة قابلة للمراجعة. يجمع المشروع بين **YouTube Data API v3** للحصول على هوية الفيديو والقناة والبيانات الوصفية والتعليقات العامة، وبين مستخرج captions الموجود في المشروع السابق للحصول على النص الزمني المتاح للفيديو. الهدف هو تجهيز evidence brief يمكن تحليله لاحقًا بواسطة Gemini، وليس نشر المقالات تلقائيًا أو اعتبار كلام الفيديو حقيقة مستقلة.
 
-> **الحالة الحالية:** المستودع بدأ من أداة `YouTube-subtitles-translator-`. تم نقل مستخرج captions كنقطة بداية، بينما ما زال عميل YouTube API ومسار Gemini في مرحلة التهيئة. لا توجد مفاتيح حقيقية داخل Git.
+> **الحالة الحالية:** هذا المستودع هو أساس المشروع. عميل YouTube Data API وطبقة captions موجودان، لكن probe الجماعي وموصل Gemini لم يكتملَا بعد. لا توجد مفاتيح حقيقية داخل Git.
 
-## ماذا يحقق هذا المستودع؟
+## ماذا ستنجز؟
 
-عند اكتمال المسار، سيستطيع المستخدم إعطاء استعلام أو رابط فيديو، ثم الحصول على ملف JSON وملف Markdown يحتويان على عنوان الفيديو، القناة، تاريخ النشر، المدة، الإحصائيات، captions المتاحة، والتعليقات العامة المحدودة. ستظل كل مادة مصنفة حسب نوعها: **ادعاء من الناشر، نص caption، أو تجربة مستخدم في تعليق**.
+بعد إكمال خطوات الإعداد ستتمكن من تثبيت المشروع وتشغيل أداة captions على فيديو YouTube عام، والحصول على ملف SRT أصلي ونسخة مترجمة للمراجعة. كما يمكنك تشغيل الاختبارات المحلية والتحقق من عميل YouTube API دون أي اتصال خارجي. جمع metadata والتعليقات وتحويل كل ذلك إلى evidence bundle هو المرحلة التالية، وليس جزءًا من التشغيل الأول الحالي.
 
-لا يقوم المشروع حاليًا بتنزيل الفيديو، ولا ينشر شيئًا على Blogger، ولا يتجاوز تسجيل الدخول أو الحماية، ولا يضمن وجود captions لكل فيديو. كما أن Gemini ليس مفعّلًا في هذه النسخة الأولى؛ وجود `GEMINI_API_KEY` في `.env.example` مجرد مكان موثق لتكامل لاحق، وليس تصريحًا بوضع مفتاح فعلي في الملف.
+لا يقوم المشروع حاليًا بتنزيل الفيديو، ولا ينشر شيئًا على Blogger، ولا يتجاوز تسجيل الدخول أو CAPTCHA أو الحماية، ولا يضمن وجود captions لكل فيديو. كما أن Gemini غير مفعّل في هذه النسخة؛ وجود `GEMINI_API_KEY` في `.env.example` موضع توثيق لتكامل لاحق فقط.
 
 ## المتطلبات
 
-| المتطلب | الحالة | الغرض |
-|---|---|---|
-| Python 3.11 أو أحدث | مطلوب | تشغيل الأدوات |
-| YouTube Data API v3 key | مطلوب لمسار metadata والبحث والتعليقات | استدعاءات YouTube الرسمية |
-| captions متاحة للفيديو | اختياري لكل فيديو | استخراج نص الفيديو |
-| Gemini API key | اختياري حاليًا | تحليل evidence brief في مرحلة لاحقة |
-| GitHub Actions | اختياري | تشغيل probes دون حفظ الأسرار محليًا |
+| المتطلب | الحالة | الغرض | كيف تتحقق منه؟ |
+|---|---|---|---|
+| Python 3.11 أو أحدث | مطلوب | تشغيل الأدوات | `python3 --version` |
+| اتصال إنترنت | مطلوب للتشغيل على YouTube | جلب captions أو API | افتح فيديو YouTube في متصفحك |
+| YouTube Data API v3 key | مطلوب فقط لمسار API الرسمي | البحث والmetadata والتعليقات | فحص إعداد المفتاح في `docs/configuration.md` |
+| captions متاحة للفيديو | اختياري لكل فيديو | استخراج نص الفيديو | تشغيل الأداة ومراجعة حالة transcript |
+| Gemini API key | غير مطلوب حاليًا | تحليل evidence لاحقًا | لا تضعه قبل تفعيل الموصل |
+| GitHub Actions | اختياري | compile والاختبارات | تبويب Actions في GitHub |
 
-## التثبيت المحلي
+## خريطة المشروع
 
-نفّذ الأوامر التالية من مجلد المستودع الذي يحتوي على هذا الملف:
+| المسار | الوظيفة |
+|---|---|
+| `youtube_subtitles_translator.py` | أداة captions والترجمة المنقولة من المشروع السابق |
+| `src/youtube_api_client.py` | عميل أولي لعمليات القراءة العامة من YouTube Data API v3 |
+| `tests/test_youtube_api_client.py` | خمسة اختبارات offline للعميل الرسمي |
+| `docs/configuration.md` | خطوات الأسرار والمتغيرات والتدوير |
+| `docs/integration.md` | فصل طبقات YouTube API وcaptions والتعليقات وGemini |
+| `docs/operations.md` | التشغيل، artifacts، CI، وسياسة التوقف |
+| `docs/troubleshooting.md` | الأخطاء الشائعة والاسترداد |
+| `.env.example` | أسماء الأسرار مع placeholders فقط |
+| `.github/workflows/ci.yml` | compile واختبارات offline بلا أسرار أو quota |
+| `LEGACY_TRANSLATOR_README.md` | توثيق الأداة القديمة كما كان |
+
+## الخطوة 1: تنزيل المشروع وإنشاء البيئة
+
+نفّذ الأوامر التالية في طرفية جديدة. الغرض هو تنزيل المستودع وإنشاء بيئة Python منفصلة حتى لا تختلط اعتمادياته بمشاريع أخرى.
 
 ```bash
 git clone https://github.com/ysrg2003/youtube-evidence-manager.git
@@ -33,68 +49,131 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-إذا ظهر خطأ `No module named ...` فتأكد أن البيئة الافتراضية مفعلة؛ يجب أن يظهر `(.venv)` في بداية سطر الطرفية، ثم أعد أمر تثبيت المتطلبات.
+النتيجة المتوقعة هي عودة الأوامر دون خطأ، وظهور `(.venv)` في بداية سطر الطرفية. إذا ظهر `No module named ...` فتأكد من تفعيل البيئة، ثم أعد أمر التثبيت. في Windows استخدم `.venv\Scripts\activate` بدل `source .venv/bin/activate`.
 
-## إعداد الأسرار
+## الخطوة 2: إعداد YouTube API key عند الحاجة
 
-انسخ ملف المثال إلى ملف محلي لا يدخل Git:
+تشغيل أداة captions وحدها لا يحتاج `YOUTUBE_API_KEY`. تحتاجه فقط عندما تستخدم `src/youtube_api_client.py` لمسار YouTube Data API الرسمي.
+
+1. افتح [Google Cloud Console](https://console.cloud.google.com/) بالحساب الذي سيملك المشروع.
+2. اختر مشروعًا موجودًا أو أنشئ مشروعًا جديدًا.
+3. افتح **APIs & Services → Library**، وابحث عن **YouTube Data API v3**، ثم اضغط **Enable**.
+4. افتح **APIs & Services → Credentials**، ثم **Create Credentials → API key**.
+5. افتح **Edit API key** وقيّد استخدامه إلى YouTube Data API v3 قدر الإمكان.
+6. في جذر المستودع نفّذ:
 
 ```bash
 cp .env.example .env
 ```
 
-بعد ذلك أضف قيمة `YOUTUBE_API_KEY` في `.env` فقط. لا تضع قيمة حقيقية في `.env.example` أو في أي ملف Python أو في commit. عند استخدام GitHub Actions، خزّن المفتاح في **Settings → Secrets and variables → Actions → New repository secret** باسم `YOUTUBE_API_KEY`.
-
-للحصول على مفتاح YouTube Data API، استخدم [Google Cloud Console](https://console.cloud.google.com/)، أنشئ أو اختر مشروعًا، فعّل YouTube Data API v3، ثم أنشئ API key. يجب تقييد المفتاح حسب الحاجة ومراجعته دوريًا. لا نطلب OAuth في المسار العام الحالي لأن البحث والبيانات العامة تستعمل API key؛ captions.download للفيديوهات المملوكة يتطلب صلاحيات مختلفة وليس جزءًا من نقطة البداية هذه.
-
-## نقطة البداية الحالية
-
-الأداة المنقولة من المشروع السابق موجودة في:
+7. افتح `.env` في محرر نصي وأضف:
 
 ```text
-youtube_subtitles_translator.py
+YOUTUBE_API_KEY=ضع_المفتاح_الحقيقي_محليًا_فقط
 ```
 
-تشغيلها على فيديو واحد يحفظ captions الأصلي وملف الترجمة في مجلد `output/`:
+يحمّل العميل المحلي `.env` تلقائيًا عبر `python-dotenv`. لا تُنفّذ `git add .env`؛ تحقق من أن Git يتجاهله:
+
+```bash
+git status --short --ignored .env
+```
+
+يجب أن يظهر `.env` ضمن الملفات المتجاهلة، لا ضمن الملفات الجديدة أو المعدلة. تفاصيل التخزين في GitHub والتدوير والإلغاء موجودة في [configuration.md](docs/configuration.md).
+
+## الخطوة 3: تشغيل أصغر مثال ناجح
+
+هذا المثال يستخدم أداة captions المنقولة. استبدل `VIDEO_ID` بمعرّف فيديو عام حقيقي، مثل المعرّف الموجود بعد `v=` في رابط YouTube.
 
 ```bash
 python youtube_subtitles_translator.py "https://www.youtube.com/watch?v=VIDEO_ID" --target ar --output-dir output
 ```
 
-استبدل `VIDEO_ID` بمعرّف فيديو حقيقي. نجاح التشغيل يعني ظهور ملف `.srt` أصلي وملف ترجمة في `output/`. إذا ظهر `Transcripts are disabled` أو `No transcript available` فهذا يعني أن الفيديو لا يتيح مسار captions الذي يستطيع المستخرج الوصول إليه؛ لا ينبغي تحويله إلى فشل في YouTube API أو إعادة المحاولة بلا نهاية.
+النتيجة المتوقعة:
 
-## البنية الحالية
+```text
+output/single_video/<title>_<VIDEO_ID>/<source_language>.srt
+output/single_video/<title>_<VIDEO_ID>/arabic.srt
+```
 
-| المسار | الوظيفة |
-|---|---|
-| `youtube_subtitles_translator.py` | نقطة بداية مستخرجة من أداة captions السابقة |
-| `LEGACY_TRANSLATOR_README.md` | توثيق الأداة السابقة كما كان |
-| `src/` | مكان عميل YouTube API ومحوّل evidence الذي سيضاف في المرحلة التالية |
-| `tests/` | الاختبارات التي لا تحتاج اتصالًا خارجيًا |
-| `docs/` | خرائط الإعداد والتكامل والتشغيل |
-| `.env.example` | أسماء الأسرار فقط، بلا قيم حقيقية |
-| `.gitignore` | يمنع البيئة والمخرجات وملفات الأسرار من الدخول إلى Git |
+قد يختلف اسم المجلد بحسب عنوان الفيديو واللغة المتاحة. وجود ملف المصدر `.srt` يثبت أن captions استُخرجت؛ وجود `arabic.srt` يثبت أن مرحلة الترجمة انتهت، لكنه لا يثبت دقة الترجمة.
 
-## سياسة الأدلة
+إذا ظهر `Transcripts are disabled` أو `No transcript available`، فالفيديو لا يتيح مسار captions الذي يستطيع المستخرج الوصول إليه. احفظ metadata إن كانت لديك، ولا تحاول تجاوز قرار صاحب الفيديو أو إعادة الطلب بلا نهاية.
 
-وجود caption أو تعليق لا يعني أن الادعاء صحيح. يجب أن يسجل التقرير الرابط، وقت الجمع، نوع المصدر، اللغة، وهل النص تلقائي أم يدوي إذا أمكن معرفته، وأن يفصل بين كلام المتحدث وتجربة المعلق والحقائق التي تحتاج إلى مصدر مستقل. لا يُرسل المحتوى إلى مقال نهائي قبل المراجعة التحريرية، ولا يملك هذا المستودع أي صلاحية نشر تلقائي.
+## أمثلة إضافية
 
-## الاختبار
+### المثال الأول: معالجة فيديو باستخدام معرّف فقط
 
-نفّذ الاختبارات المحلية من جذر المستودع:
+```bash
+python youtube_subtitles_translator.py VIDEO_ID --target en --output-dir output
+```
+
+يُستخدم هذا عندما تعرف المعرّف دون الرابط. النتيجة المتوقعة ملف مصدر وملف `en.srt` في `output/`. إذا رفض البرنامج المعرّف، تحقق من أنه 11 محرفًا من نمط YouTube الصحيح.
+
+### المثال الثاني: معالجة قائمة تشغيل
+
+```bash
+python youtube_subtitles_translator.py "https://www.youtube.com/playlist?list=PLAYLIST_ID" --target ar --workers 3 --chunk-size 20 --output-dir output
+```
+
+هذا يمر على عناصر القائمة ويقلل التزامن وحجم دفعة الترجمة. النتيجة المتوقعة مجلد `output/playlist_<title>/` مع مجلد لكل فيديو ناجح. إذا فشل فيديو واحد، راجع سجل ذلك الفيديو بدل اعتبار القائمة كلها فاشلة.
+
+### المثال الثالث: اختبار API دون مفتاح أو اتصال خارجي
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-النجاح المتوقع هو `OK` مع عدد الاختبارات الموجود في المستودع. الاختبارات لا تتحقق من صلاحية مفاتيح YouTube أو Gemini؛ تلك الخطوة تحتاج probe خارجيًا موثقًا ولا ينبغي تشغيلها تلقائيًا من دون طلب واضح.
+هذا هو المثال الآمن للتحقق من نقطة البداية. النتيجة المتوقعة:
 
-## التوثيق التفصيلي
+```text
+Ran 5 tests
+OK
+```
 
-- [خريطة الإعدادات والأسرار](docs/configuration.md)
-- [تصميم التكامل مع YouTube وcaptions وGemini](docs/integration.md)
-- [التشغيل والـ artifacts](docs/operations.md)
-- [التشخيص واسترداد الأخطاء](docs/troubleshooting.md)
+إذا فشل الاختبار بسبب استيراد، أعد `python -m pip install -r requirements.txt` داخل البيئة الافتراضية. هذه الاختبارات لا تتحقق من صحة YouTube API key.
+
+## استخدام عميل YouTube API من Python
+
+بعد إعداد `.env`، يمكن استدعاء العميل للقراءة العامة. هذا المثال لا يطبع المفتاح ولا يكتب نتيجة في Git:
+
+```bash
+python - <<'PY'
+from src.youtube_api_client import YouTubeDataClient
+
+client = YouTubeDataClient()
+result = client.search_videos("AI-assisted building", max_results=3)
+print({"items": len(result.get("items", [])), "has_next_page": bool(result.get("nextPageToken"))})
+PY
+```
+
+النتيجة المتوقعة كائن مختصر مثل:
+
+```text
+{'items': 3, 'has_next_page': True}
+```
+
+إذا ظهر `YOUTUBE_API_KEY is not configured`، تحقق من وجود `.env` في جذر المستودع ومن اسم المتغير حرفيًا. إذا ظهر `keyInvalid` أو `accessNotConfigured`، راجع تفعيل API والمشروع الذي أنشأت فيه المفتاح.
+
+## كيف ستعمل الأدلة لاحقًا؟
+
+المسار المقصود هو: `search.list` لاكتشاف الفيديوهات، ثم `videos.list` للبيانات الوصفية، ثم مستخرج captions للنص الزمني، ثم `commentThreads.list` للتعليقات العامة، وأخيرًا Gemini لتحليل evidence bundle. سيبقى caption مصنفًا كنص مصدر، وكلام المتحدث ادعاءً من الناشر، والتعليقات تجارب مستخدمين غير موثقة. لا يُرسل أي مقال إلى Blogger تلقائيًا.
+
+## الأسرار والتنظيف
+
+لا تحفظ API keys أو captions أو التعليقات أو تقارير البحث في Git. الملفات التالية متجاهلة تلقائيًا: `.env`, `output/`, `artifacts/`, `reports/`, ملفات `.srt` و`.jsonl`. إذا ظهر مفتاح في commit أو سجل، ألغِه فورًا من Google Cloud، أنشئ مفتاحًا بديلًا، حدّث GitHub Secret، ثم افحص سجل Git قبل مواصلة العمل.
+
+## التحقق النهائي
+
+نفّذ الأوامر التالية قبل فتح Pull Request:
+
+```bash
+python3 -m py_compile youtube_subtitles_translator.py src/youtube_api_client.py
+python -m unittest discover -s tests -v
+git diff --check
+git status --short
+```
+
+النجاح يعني عدم وجود أخطاء compile، وظهور `OK`، وعدم وجود أخطاء whitespace، وعدم وجود `.env` أو مخرجات شخصية ضمن الملفات المعدلة. Workflow `CI` في GitHub ينفذ compile والاختبارات offline تلقائيًا عند push أو Pull Request، ولا يستخدم YouTube quota.
 
 ## المراجع الرسمية
 
