@@ -1,0 +1,102 @@
+name: Collect YouTube evidence
+
+on:
+  workflow_dispatch:
+    inputs:
+      video:
+        description: "YouTube video URL or 11-character video ID"
+        required: true
+        type: string
+      max_comments:
+        description: "Maximum top-level public comments"
+        required: false
+        default: "50"
+        type: string
+      max_comment_pages:
+        description: "Maximum comment API pages"
+        required: false
+        default: "2"
+        type: string
+      skip_comments:
+        description: "Skip public comment collection"
+        required: false
+        default: false
+        type: boolean
+      analyze:
+        description: "Run optional Gemini analysis"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-${{ github.workflow }}-${{ github.ref }}-${{ inputs.video }}
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VIDEO_INPUT: ${{ inputs.video }}
+      MAX_COMMENTS: ${{ inputs.max_comments }}
+      MAX_COMMENT_PAGES: ${{ inputs.max_comment_pages }}
+      SKIP_COMMENTS: ${{ inputs.skip_comments }}
+      ANALYZE: ${{ inputs.analyze }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Validate required configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${YOUTUBE_API_KEY:-}" ]]; then
+            echo "YOUTUBE_API_KEY is missing. Add it under Settings > Secrets and variables > Actions > Secrets."
+            exit 1
+          fi
+          if [[ "$ANALYZE" == "true" && -z "${GEMINI_API_KEY:-}" ]]; then
+            echo "GEMINI_API_KEY is required when analyze=true."
+            exit 1
+          fi
+
+      - name: Collect evidence bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/evidence
+          args=(
+            --output-dir artifacts/evidence
+            --max-comments "$MAX_COMMENTS"
+            --max-comment-pages "$MAX_COMMENT_PAGES"
+          )
+          if [[ "$SKIP_COMMENTS" == "true" ]]; then
+            args+=(--skip-comments)
+          fi
+          if [[ "$ANALYZE" == "true" ]]; then
+            args+=(--analyze)
+          fi
+          python -m src.evidence_cli "$VIDEO_INPUT" "${args[@]}" 2>&1 | tee artifacts/evidence/run.log
+
+      - name: Upload evidence artifacts
+        if: ${{ always() && hashFiles('artifacts/evidence/**') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-evidence-${{ github.run_id }}
+          path: artifacts/evidence/
+          if-no-files-found: error
+          retention-days: 14

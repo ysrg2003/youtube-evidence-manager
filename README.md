@@ -2,13 +2,13 @@
 
 مستودع خاص لجمع أدلة بحثية من YouTube بطريقة قابلة للمراجعة. يجمع المشروع بين **YouTube Data API v3** للحصول على هوية الفيديو والقناة والبيانات الوصفية والتعليقات العامة، وبين مستخرج captions الموجود في المشروع السابق للحصول على النص الزمني المتاح للفيديو. الهدف هو تجهيز evidence brief يمكن تحليله لاحقًا بواسطة Gemini، وليس نشر المقالات تلقائيًا أو اعتبار كلام الفيديو حقيقة مستقلة.
 
-> **الحالة الحالية:** هذا المستودع هو أساس المشروع. عميل YouTube Data API وطبقة captions موجودان، لكن probe الجماعي وموصل Gemini لم يكتملَا بعد. لا توجد مفاتيح حقيقية داخل Git.
+> **الحالة الحالية:** مسار جمع الأدلة لفيديو واحد جاهز للاستخدام: يجمع metadata والتعليقات العامة وcaptions المتاحة، ويحفظ `evidence.json` و`evidence.md`. تحليل Gemini اختياري عبر `--analyze`، ولا يوجد نشر تلقائي أو تنزيل للفيديو. لا توجد مفاتيح حقيقية داخل Git.
 
 ## ماذا ستنجز؟
 
-بعد إكمال خطوات الإعداد ستتمكن من تثبيت المشروع وتشغيل أداة captions على فيديو YouTube عام، والحصول على ملف SRT أصلي ونسخة مترجمة للمراجعة. كما يمكنك تشغيل الاختبارات المحلية والتحقق من عميل YouTube API دون أي اتصال خارجي. جمع metadata والتعليقات وتحويل كل ذلك إلى evidence bundle هو المرحلة التالية، وليس جزءًا من التشغيل الأول الحالي.
+بعد إكمال خطوات الإعداد ستتمكن من تشغيل جامع الأدلة على فيديو YouTube عام، والحصول على ملفي `evidence.json` و`evidence.md` يحتويان على metadata رسمية، وcaptions متاحة مع بصمة SHA-256، وتعليقات عامة محدودة، وقيود الجمع. كما يمكنك تشغيل محلل Gemini اختياريًا لإنتاج `analysis.json` و`analysis.md` مع فصل الادعاءات عن التجارب وما يحتاج إلى تحقق.
 
-لا يقوم المشروع حاليًا بتنزيل الفيديو، ولا ينشر شيئًا على Blogger، ولا يتجاوز تسجيل الدخول أو CAPTCHA أو الحماية، ولا يضمن وجود captions لكل فيديو. كما أن Gemini غير مفعّل في هذه النسخة؛ وجود `GEMINI_API_KEY` في `.env.example` موضع توثيق لتكامل لاحق فقط.
+لا يقوم المشروع بتنزيل الفيديو، ولا ينشر شيئًا على Blogger، ولا يتجاوز تسجيل الدخول أو CAPTCHA أو الحماية، ولا يضمن وجود captions لكل فيديو. جمع metadata والتعليقات يحتاج `YOUTUBE_API_KEY`. تحليل Gemini يحتاج `GEMINI_API_KEY` ويظل اختياريًا؛ إذا تعذر التحليل فلن يُنشئ البرنامج تقريرًا مضللًا أو citations مخترعة.
 
 ## المتطلبات
 
@@ -18,7 +18,7 @@
 | اتصال إنترنت | مطلوب للتشغيل على YouTube | جلب captions أو API | افتح فيديو YouTube في متصفحك |
 | YouTube Data API v3 key | مطلوب فقط لمسار API الرسمي | البحث والmetadata والتعليقات | فحص إعداد المفتاح في `docs/configuration.md` |
 | captions متاحة للفيديو | اختياري لكل فيديو | استخراج نص الفيديو | تشغيل الأداة ومراجعة حالة transcript |
-| Gemini API key | غير مطلوب حاليًا | تحليل evidence لاحقًا | لا تضعه قبل تفعيل الموصل |
+| Gemini API key | اختياري للتحليل | تحليل evidence بعد الجمع | استخدم `--analyze` بعد إعداد المفتاح |
 | GitHub Actions | اختياري | compile والاختبارات | تبويب Actions في GitHub |
 
 ## خريطة المشروع
@@ -26,14 +26,18 @@
 | المسار | الوظيفة |
 |---|---|
 | `youtube_subtitles_translator.py` | أداة captions والترجمة المنقولة من المشروع السابق |
-| `src/youtube_api_client.py` | عميل أولي لعمليات القراءة العامة من YouTube Data API v3 |
-| `tests/test_youtube_api_client.py` | خمسة اختبارات offline للعميل الرسمي |
+| `src/youtube_api_client.py` | عميل القراءة العامة من YouTube Data API v3 |
+| `src/evidence_manager.py` | جامع evidence وتصدير JSON/Markdown |
+| `src/evidence_cli.py` | واجهة سطر الأوامر لجمع evidence لفيديو واحد |
+| `src/gemini_analyzer.py` | محلل Gemini اختياري بمخرجات JSON منظمة |
+| `tests/` | اختبارات offline للعميل والجامع والمحلل |
 | `docs/configuration.md` | خطوات الأسرار والمتغيرات والتدوير |
 | `docs/integration.md` | فصل طبقات YouTube API وcaptions والتعليقات وGemini |
 | `docs/operations.md` | التشغيل، artifacts، CI، وسياسة التوقف |
 | `docs/troubleshooting.md` | الأخطاء الشائعة والاسترداد |
 | `.env.example` | أسماء الأسرار مع placeholders فقط |
 | `.github/workflows/ci.yml` | compile واختبارات offline بلا أسرار أو quota |
+| `.github/workflows/evidence.yml` | تشغيل يدوي لجمع evidence وحفظ Artifacts |
 | `LEGACY_TRANSLATOR_README.md` | توثيق الأداة القديمة كما كان |
 
 ## الخطوة 1: تنزيل المشروع وإنشاء البيئة
@@ -99,6 +103,40 @@ output/single_video/<title>_<VIDEO_ID>/arabic.srt
 
 إذا ظهر `Transcripts are disabled` أو `No transcript available`، فالفيديو لا يتيح مسار captions الذي يستطيع المستخرج الوصول إليه. احفظ metadata إن كانت لديك، ولا تحاول تجاوز قرار صاحب الفيديو أو إعادة الطلب بلا نهاية.
 
+## جمع evidence bundle لفيديو واحد
+
+بعد إعداد `YOUTUBE_API_KEY`، شغّل هذا الأمر من جذر المستودع. استبدل `VIDEO_ID` بمعرّف فيديو عام حقيقي:
+
+```bash
+python -m src.evidence_cli "https://www.youtube.com/watch?v=VIDEO_ID" --output-dir artifacts/evidence
+```
+
+النتيجة المتوقعة هي مجلد باسم قريب من `artifacts/evidence/<title>_<VIDEO_ID>/` يحتوي على:
+
+```text
+evidence.json
+evidence.md
+```
+
+يمثل `evidence.json` البيانات القابلة للمعالجة، بينما يمثل `evidence.md` نسخة سهلة للمراجعة. إذا كانت التعليقات مغلقة فستبقى metadata وcaptions محفوظة وتظهر الحالة ضمن `limitations`.
+
+لتقليل الحصة أو تخطي التعليقات:
+
+```bash
+python -m src.evidence_cli VIDEO_ID --max-comments 20 --max-comment-pages 1 --skip-comments
+```
+
+## تحليل Gemini اختياريًا
+
+ضع `GEMINI_API_KEY` و`GEMINI_MODEL` في `.env`، ثم شغّل الجمع والتحليل في خطوة واحدة:
+
+```bash
+cp .env.example .env
+python -m src.evidence_cli VIDEO_ID --analyze
+```
+
+ينتج الأمر `analysis.json` و`analysis.md` داخل مجلد الحزمة. لا يُرسل المفتاح إلى Git، ولا يضيف البرنامج citations إذا لم يعرضها النموذج صراحة. إذا لم تكن تريد التحليل، لا تستخدم `--analyze` ولا تحتاج إلى `GEMINI_API_KEY`.
+
 ## أمثلة إضافية
 
 ### المثال الأول: معالجة فيديو باستخدام معرّف فقط
@@ -154,9 +192,15 @@ PY
 
 إذا ظهر `YOUTUBE_API_KEY is not configured`، تحقق من وجود `.env` في جذر المستودع ومن اسم المتغير حرفيًا. إذا ظهر `keyInvalid` أو `accessNotConfigured`، راجع تفعيل API والمشروع الذي أنشأت فيه المفتاح.
 
-## كيف ستعمل الأدلة لاحقًا؟
+## التشغيل من GitHub Actions
 
-المسار المقصود هو: `search.list` لاكتشاف الفيديوهات، ثم `videos.list` للبيانات الوصفية، ثم مستخرج captions للنص الزمني، ثم `commentThreads.list` للتعليقات العامة، وأخيرًا Gemini لتحليل evidence bundle. سيبقى caption مصنفًا كنص مصدر، وكلام المتحدث ادعاءً من الناشر، والتعليقات تجارب مستخدمين غير موثقة. لا يُرسل أي مقال إلى Blogger تلقائيًا.
+يمكن تشغيل النظام من GitHub دون فتح طرفية محلية. افتح **Actions → Collect YouTube evidence → Run workflow**، ثم أدخل رابط الفيديو أو معرّفه، وحدد حد التعليقات والصفحات، واختر `analyze` فقط إذا كان `GEMINI_API_KEY` محفوظًا في Secrets. يحتاج الـ Workflow إلى Secret باسم `YOUTUBE_API_KEY`، بينما `GEMINI_API_KEY` اختياري. بعد انتهاء التشغيل، نزّل artifact باسم قريب من `youtube-evidence-<run_id>` وستجد `evidence.json` و`evidence.md`، ومع التحليل `analysis.json` و`analysis.md`.
+
+> لا يرفع الـ Workflow أي فيديو أو ينشر إلى Blogger. وهو يدوي عمدًا حتى لا تُستهلك حصة YouTube دون قرار واضح.
+
+## كيف تعمل الأدلة الآن؟
+
+المسار العملي هو: يتحقق البرنامج من `video_id`، ثم يستدعي `videos.list` للبيانات الوصفية، ومستخرج captions للنص الزمني، و`commentThreads.list` للتعليقات العامة ضمن حد صفحات وعدد محدد. بعدها ينشئ evidence bundle مع labels وlimitations وبصمة للنص. عند طلب `--analyze` فقط، يرسل bundle إلى Gemini لإخراج منظم؛ يبقى caption نصًا مصدره، وكلام المتحدث ادعاءً من الناشر، والتعليقات تجارب مستخدمين غير موثقة. لا يُرسل أي مقال إلى Blogger تلقائيًا.
 
 ## الأسرار والتنظيف
 
@@ -167,8 +211,9 @@ PY
 نفّذ الأوامر التالية قبل فتح Pull Request:
 
 ```bash
-python3 -m py_compile youtube_subtitles_translator.py src/youtube_api_client.py
+python3 -m py_compile youtube_subtitles_translator.py src/youtube_api_client.py src/evidence_manager.py src/gemini_analyzer.py src/evidence_cli.py
 python -m unittest discover -s tests -v
+python -m src.evidence_cli --help
 git diff --check
 git status --short
 ```

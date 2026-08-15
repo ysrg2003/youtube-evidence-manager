@@ -9,7 +9,8 @@
 | الاسم | النوع | مطلوب الآن؟ | يقرأه حاليًا | مثال آمن |
 |---|---|---:|---|---|
 | `YOUTUBE_API_KEY` | سر API | نعم عند استدعاء `YouTubeDataClient` | `src/youtube_api_client.py` و`.env` | `REPLACE_WITH_YOUTUBE_API_KEY` |
-| `GEMINI_API_KEY` | سر API مستقبلي | لا؛ لا يقرأه كود حاليًا | `.env.example` للتخطيط فقط | `REPLACE_WITH_GEMINI_API_KEY` |
+| `GEMINI_API_KEY` | سر API | اختياري؛ مطلوب فقط مع `--analyze` | `src/gemini_analyzer.py` و`.env` | `REPLACE_WITH_GEMINI_API_KEY` |
+| `GEMINI_MODEL` | متغير تشغيل غير سري | اختياري؛ الافتراضي `gemini-2.5-flash` | `src/gemini_analyzer.py` و`.env` أو Actions Variables | `gemini-2.5-flash` |
 
 ## `YOUTUBE_API_KEY` — مفتاح YouTube Data API v3
 
@@ -85,11 +86,11 @@ env:
 
 **التدوير والإلغاء.** إذا ظهر المفتاح في commit أو سجل أو شاشة، اعتبره مكشوفًا فورًا. افتح **Google Cloud Console → APIs & Services → Credentials**، احذف المفتاح المكشوف أو دوّره، أنشئ قيمة جديدة، ثم حدّث `.env` وGitHub Secret. افحص سجل Git قبل مواصلة العمل؛ لا تنسخ القيمة إلى تقرير.
 
-## `GEMINI_API_KEY` — مفتاح Gemini مستقبلي
+## `GEMINI_API_KEY` — مفتاح Gemini الاختياري
 
-**الغرض.** سيُستخدم مستقبلًا لتحليل evidence bundle بعد اكتمال طبقة YouTube. لا يقرأه أي كود نشط في هذا commit، ووجوده في `.env.example` يعرّف الاسم المتوقع فقط.
+**الغرض.** يستخدمه `src/gemini_analyzer.py` فقط عندما تشغّل `python -m src.evidence_cli VIDEO_ID --analyze` بعد جمع evidence bundle. لا يُرسل أي طلب Gemini في التشغيل العادي.
 
-**التصنيف.** Secret. لا تضعه الآن إذا لم يكن هناك adapter مفعّل.
+**التصنيف.** Secret. لا تحتاج إلى وضعه إذا كنت تريد metadata وcaptions والتعليقات فقط.
 
 **ما الذي تضعه؟** في التوثيق استخدم placeholder فقط:
 
@@ -97,11 +98,15 @@ env:
 GEMINI_API_KEY=REPLACE_WITH_GEMINI_API_KEY
 ```
 
-**مكان الإضافة عند تفعيل التكامل.** سيكون في `.env` محليًا أو في **Settings → Secrets and variables → Actions → Secrets → New repository secret** داخل هذا المستودع، بالاسم `GEMINI_API_KEY`. لا يُضاف إلى Variables.
+**مكان الإضافة.** محليًا، انسخ `.env.example` إلى `.env` ثم أضف `GEMINI_API_KEY`. في GitHub Actions يُحفظ في **Settings → Secrets and variables → Actions → Secrets → New repository secret** بالاسم نفسه، ولا يُضاف إلى Variables. يمكنك اختيار النموذج عبر `GEMINI_MODEL`، وقيمته الافتراضية في القالب `gemini-2.5-flash`.
 
-**التحقق والاسترداد.** لا يوجد health check نشط لهذا السر في النسخة الحالية. عند إضافة adapter يجب توثيق endpoint والنموذج والطلب الأصغر ومخرجات redaction قبل تفعيل Workflow. اختبارات المشروع السابق أعادت HTTP 403 `permission_denied` من مشروع Gemini الحالي؛ لذلك لا ينبغي تشغيل corpus أو إعادة المحاولة بلا حدود.
+**التحقق والاسترداد.** نفّذ جمع evidence أولًا، ثم استخدم `--analyze` على فيديو واحد فقط. نجاح العملية يكتب `analysis.json` و`analysis.md` بجوار `evidence.json`. إذا ظهر `permission_denied` أو HTTP 401/403، أوقف المحاولة وراجع المشروع والصلاحيات والمفتاح دون طباعته؛ لا توجد إعادة محاولات غير محدودة ولا تدوير مفاتيح لتجاوز الحصة.
 
 **التدوير والإلغاء.** استخدم صفحة إدارة مفاتيح المشروع في [Google AI Studio](https://aistudio.google.com/) أو Google Cloud حسب مكان إنشاء المفتاح. ألغِ المفتاح فور انكشافه، ثم حدّث التخزين المحلي وGitHub Secret. لا تضع قيمة المفتاح في issue أو commit أو artifact.
+
+## `GEMINI_MODEL` — اختيار نموذج التحليل
+
+هذا المتغير غير سري ويحدد اسم نموذج Gemini الذي يستعمله `--analyze`. اتركه على `gemini-2.5-flash` في `.env.example`، أو غيّره إلى اسم نموذج متاح لحسابك. في GitHub Actions ضعه في **Settings → Secrets and variables → Actions → Variables → New repository variable** بالاسم `GEMINI_MODEL`; لا تضعه في Secrets إذا لم تكن هناك سياسة داخلية تتطلب ذلك. إذا ظهر خطأ model not found، راجع قائمة النماذج المتاحة لدى المزود، حدّث القيمة، ثم أعد تشغيل فيديو واحد.
 
 ## متغيرات مشتقة وحالة تشغيل
 

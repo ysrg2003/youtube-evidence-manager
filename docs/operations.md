@@ -2,19 +2,20 @@
 
 ## ما الذي يعمل حاليًا؟
 
-المستودع يحتوي على Workflow اسمه `CI` في `.github/workflows/ci.yml`. يعمل عند `push` إلى `main`، وعند Pull Request إلى `main`، ويمكن تشغيله يدويًا من تبويب Actions. هذا Workflow لا يستخدم `YOUTUBE_API_KEY` ولا يتصل بـ YouTube أو Gemini؛ وظيفته compile واختبارات offline فقط.
+المستودع يحتوي على Workflowين. `CI` في `.github/workflows/ci.yml` يعمل عند `push` إلى `main`، وعند Pull Request إلى `main`، ويمكن تشغيله يدويًا؛ وهو offline ولا يستخدم أسرارًا. أما `Collect YouTube evidence` في `.github/workflows/evidence.yml` فهو تشغيل يدوي فقط، ويستقبل رابط فيديو ومدخلات حدود التعليقات والتحليل، ثم يحفظ النتائج كـ Artifact.
 
 ## التشغيل المحلي من الصفر
 
 من جذر المستودع، بعد تفعيل `.venv` وتثبيت requirements، نفّذ:
 
 ```bash
-python3 -m py_compile youtube_subtitles_translator.py src/youtube_api_client.py
+python3 -m py_compile youtube_subtitles_translator.py src/youtube_api_client.py src/evidence_manager.py src/gemini_analyzer.py src/evidence_cli.py
 python -m unittest discover -s tests -v
+python -m src.evidence_cli --help
 git diff --check
 ```
 
-النتيجة المتوقعة هي عدم ظهور أخطاء compile، ثم `Ran 5 tests` و`OK`، ثم عودة `git diff --check` دون إخراج. إذا اختلفت النتيجة، راجع [troubleshooting.md](troubleshooting.md) قبل رفع commit.
+النتيجة المتوقعة هي عدم ظهور أخطاء compile، ثم `Ran 13 tests` و`OK`، ثم عرض تعليمات CLI، ثم عودة `git diff --check` دون إخراج. إذا اختلفت النتيجة، راجع [troubleshooting.md](troubleshooting.md) قبل رفع commit.
 
 ## تشغيل أداة captions
 
@@ -53,18 +54,23 @@ find output -type f -name '*.srt' -print
 4. افتح التشغيل المطلوب، ثم راجع job باسم **offline-tests**.
 5. النجاح يظهر كـ `success`، وتكون خطوات **Compile Python files** و**Run offline tests** ناجحة.
 
-يمكن تشغيله يدويًا من **Run workflow**، لكن لا توجد inputs أو أسرار مطلوبة في النسخة الحالية. إذا فشل بعد تعديل requirements، افتح خطوة **Install dependencies**، ثم أصلح constraint في `requirements.txt` وأعد تشغيل CI.
+يمكن تشغيل `CI` يدويًا من **Run workflow** دون inputs أو أسرار. أما `Collect YouTube evidence` فيتطلب Secret باسم `YOUTUBE_API_KEY`، ويتطلب `GEMINI_API_KEY` فقط عندما تكون input `analyze=true`. إذا فشل التثبيت، افتح خطوة **Install dependencies**؛ وإذا فشل جمع الأدلة، راجع خطوة **Validate required configuration** ثم سجل `artifacts/evidence/run.log`.
 
-## Workflow YouTube المستقبلي
+## تشغيل جامع الأدلة
 
-عند إضافة probe YouTube الرسمي، يجب أن يبدأ يدويًا (`workflow_dispatch`) وأن يستخدم السر فقط في خطوة الاستدعاء:
+بعد ضبط `YOUTUBE_API_KEY` في `.env`، شغّل جامع الأدلة لفيديو واحد:
 
-```yaml
-env:
-  YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+```bash
+python -m src.evidence_cli "https://www.youtube.com/watch?v=VIDEO_ID" --output-dir artifacts/evidence
 ```
 
-يجب أن يكون probe محدودًا إلى استعلام واحد أو 10 فيديوهات، وأن يرفع artifact منقحًا لا يحتوي على API key أو HTML خام أو نص كامل غير مطلوب. يجب أن تكون قيمة `run_corpus` الافتراضية `false`، وأن يتوقف عند `quotaExceeded` بدل تدوير المفاتيح.
+لتقليل الحصة، حدّد `--max-comments` و`--max-comment-pages` أو استخدم `--skip-comments`. يبقى التحليل منفصلًا واختياريًا:
+
+```bash
+python -m src.evidence_cli VIDEO_ID --analyze
+```
+
+في GitHub Actions، يُضاف `YOUTUBE_API_KEY` فقط إلى **Settings → Secrets and variables → Actions → Secrets**، وتُشغّل أي workflow خارجي يدويًا ومحدودًا. يجب إيقاف المسار عند `quotaExceeded` بدل تدوير المفاتيح، وعدم رفع HTML خام أو أسرار أو captions غير منقحة كـ artifact.
 
 ## التحقق من التشغيل الناجح
 
@@ -72,10 +78,12 @@ env:
 |---|---|
 | Python compile | لا تظهر أخطاء syntax |
 | Offline tests | `OK` |
-| API health check مستقبلي | HTTP 200 مع `items` أو حالة API واضحة |
+| CI | خطوات Compile وOffline tests ناجحة |
+| Evidence workflow configuration | يرفض التشغيل عند غياب Secret المطلوب برسالة واضحة |
+| API metadata/comments | استجابة بعناصر أو خطأ YouTube واضح دون المفتاح |
 | Transcript probe | `caption.status=available` أو سبب فشل محدد |
-| Evidence bundle مستقبلي | URL وvideo ID ووقت جمع وقيود موجودة |
-| Gemini adapter مستقبلي | JSON منظم أو خطأ محفوظ دون سر |
+| Evidence bundle | URL وvideo ID ووقت جمع وقيود، مع `evidence.json` و`evidence.md` |
+| Gemini adapter الاختياري | `analysis.json` و`analysis.md` أو خطأ محفوظ دون سر |
 
 ## سياسة التوقف
 

@@ -10,8 +10,8 @@
 |---|---|---|
 | `YouTubeDataClient` | موجود | بحث فيديوهات، تفاصيل فيديوهات، تعليقات عامة عبر Python |
 | captions adapter | موجود ضمن `youtube_subtitles_translator.py` | استخراج transcript متاح وتحويله إلى SRT |
-| evidence bundle | تصميم موثق فقط | لا يوجد probe جماعي بعد |
-| Gemini adapter | غير مفعّل | لا توجد استدعاءات Gemini في هذا المستودع |
+| evidence bundle | منفذ لفيديو واحد | `evidence.json` و`evidence.md` عبر `src.evidence_cli` |
+| Gemini adapter | اختياري ومفعّل عبر flag | `analysis.json` و`analysis.md` عند استخدام `--analyze` |
 | Blogger publishing | غير موجود عمدًا | لا يوجد نشر تلقائي |
 
 ## الطبقات
@@ -23,7 +23,7 @@
 | هوية القناة | `channels.list` مستقبلًا | بيانات القناة العامة | الشهرة ليست تحققًا علميًا |
 | النص | `youtube-transcript-api` | caption متاح مع توقيتات | قد يكون تلقائيًا أو ناقصًا أو خاطئًا |
 | الحوار العام | `commentThreads.list` | تعليقات وردود منشورة | آراء وتجارب غير موثقة |
-| التحليل | Gemini مستقبلًا | تلخيص واستخراج ادعاءات | لا يحوّل المصدر الضعيف إلى حقيقة |
+| التحليل | Gemini عند طلب `--analyze` | تلخيص واستخراج ادعاءات مع فصل أنواع المصادر | لا يحوّل المصدر الضعيف إلى حقيقة |
 
 ## البحث عن فيديوهات
 
@@ -91,16 +91,16 @@ order=relevance
 
 يوفر YouTube Data API الرسمي `captions.list` لعرض مسارات captions، لكنه لا يعيد النص الفعلي في الاستجابة. أما `captions.download` فيتطلب صلاحية تعديل الفيديو، لذلك لا نستخدمه لتنزيل captions لفيديوهات الآخرين [4] [5].
 
-## مسار فيديو واحد
+## مسار فيديو واحد — منفذ الآن
 
-1. استخرج `video_id` وتحقق من أنه معرّف YouTube صحيح.
-2. استدعِ `videos.list` على دفعة من المعرّفات، مع `part=snippet,contentDetails,statistics,status` والحقول التي يحتاجها التقرير فقط.
-3. اطلب captions عبر المحول الحالي. سجّل اللغة، عدد المقاطع، ووقت الجمع، وحالة المسار إن كانت المكتبة توفرها.
-4. استدعِ `commentThreads.list` بعدد محدود، مع `textFormat=plainText`. خزّن التعليقات كـ `user_generated_comment`.
-5. طبّق بوابة جودة: استبعد caption الفارغ، النص القصير جدًا، الأخطاء، والنتيجة التي تتضمن صفحة حماية بدل النص.
-6. أنشئ evidence bundle يحتوي على الروابط والبيانات الخام المختصرة والتصنيفات والقيود.
-7. أرسل bundle إلى Gemini فقط بعد نجاح الفحص. يجب أن يطلب prompt إخراجًا منظمًا يفصل الادعاءات عن التجارب والقيود، ويمنع اختلاق citations.
-8. احفظ JSON وMarkdown للمراجعة؛ لا تنشر إلى Blogger تلقائيًا.
+1. يستخرج `src.evidence_cli` `video_id` ويتحقق من أنه معرّف YouTube صحيح.
+2. يستدعي `videos.list` للmetadata المطلوبة.
+3. يطلب captions عبر المحول الحالي، ويسجل اللغة، وعدد المقاطع، وبصمة SHA-256، وسبب الفشل إن وجد.
+4. يستدعي `commentThreads.list` بعدد صفحات وعدد تعليقات قابلين للضبط، مع `textFormat=plainText`، ويخزن التعليقات كـ `user_generated_comment`.
+5. يسجل بوابة الجودة: caption الفارغ أو المعطل لا يوقف حفظ metadata، وتظهر الحالة في `caption.status` و`limitations`.
+6. ينشئ evidence bundle يحتوي على الروابط والبيانات المختصرة والتصنيفات والقيود، ثم يحفظ JSON وMarkdown.
+7. عند استخدام `--analyze` فقط، يرسل bundle إلى Gemini مع طلب JSON منظم يفصل الادعاءات عن التجارب والقيود، ولا يضيف citations غير موجودة.
+8. لا ينشر أي مقال إلى Blogger تلقائيًا.
 
 ## صيغة evidence المقترحة
 
@@ -133,9 +133,9 @@ order=relevance
 }
 ```
 
-## Gemini contract المستقبلي
+## Gemini contract الاختياري
 
-يجب أن يطلب التكامل من Gemini إخراجًا يتضمن `source_url`, `summary`, `claims`, `experiences`, `counterpoints`, `verification_needed`, `citations`, `limitations`, و`confidence`. يجب إرسال النص المصنف محليًا بدل الاعتماد على URL Context في البداية، لأن اختبارات المشروع السابق أعادت HTTP 403 `permission_denied` من مشروع Gemini الحالي.
+يطلب `src/gemini_analyzer.py` من Gemini إخراجًا يتضمن `source_url`, `summary`, `claims`, `experiences`, `counterpoints`, `verification_needed`, `citations`, `limitations`, و`confidence`. يجب إرسال النص المصنف محليًا بدل الاعتماد على URL Context في البداية، لأن اختبارات المشروع السابق أعادت HTTP 403 `permission_denied` من مشروع Gemini الحالي.
 
 يجب أن يحتوي كل claim على رابط المصدر وlabel يوضح هل هو قول للمتحدث أو نص caption أو تعليق مستخدم. إذا لم يقدم Gemini citation، يسجل النظام `citations=[]` ولا يخترع روابط.
 

@@ -15,7 +15,7 @@ source .venv/bin/activate
 |---|---|---|
 | `No module named youtube_transcript_api` | الاعتماديات غير مثبتة أو البيئة غير مفعلة | نفّذ `python -m pip install -r requirements.txt` من الجذر ثم أعد التشغيل |
 | `No module named dotenv` | `python-dotenv` غير مثبت | نفّذ أمر التثبيت نفسه وتأكد من `python -m pip show python-dotenv` |
-| خطأ compile | تعديل Python غير صحيح | نفّذ `python3 -m py_compile youtube_subtitles_translator.py src/youtube_api_client.py` واقرأ رقم السطر |
+| خطأ compile | تعديل Python غير صحيح | نفّذ `python3 -m py_compile youtube_subtitles_translator.py src/youtube_api_client.py src/evidence_manager.py src/gemini_analyzer.py src/evidence_cli.py` واقرأ رقم السطر |
 | الاختبارات تفشل بسبب import | مسار أو dependency ناقصة | فعّل `.venv`، ثبّت requirements، ثم نفّذ `python -m unittest discover -s tests -v` |
 
 ## أخطاء captions
@@ -40,14 +40,24 @@ source .venv/bin/activate
 | `commentsDisabled` | التعليقات مغلقة للفيديو | خزّن `comments.status=disabled` وانتقل إلى metadata وcaption |
 | `videoNotFound` | المعرّف غير موجود أو الفيديو غير متاح | تحقق من الرابط والمنطقة والصلاحية، ولا تعتبره دليلًا على أن API متعطل |
 
-## أخطاء Gemini المستقبلية
+## أخطاء جامع الأدلة وGitHub Actions
+
+| الرسالة أو الحالة | السبب المحتمل | التصرف |
+|---|---|---|
+| `Input is not a valid YouTube video URL` | الرابط أو المعرّف غير صحيح | استخدم رابطًا من `youtube.com/watch?v=...` أو معرّفًا من 11 محرفًا |
+| `YOUTUBE_API_KEY is missing` في Actions | لم يُحفظ السر في المستودع أو كُتب اسمه خطأ | افتح **Settings → Secrets and variables → Actions → Secrets** وأضف `YOUTUBE_API_KEY` دون طباعته |
+| `GEMINI_API_KEY is required when analyze=true` | تم اختيار `analyze=true` دون سر Gemini | أضف `GEMINI_API_KEY` أو أعد التشغيل مع `analyze=false` |
+| فشل رفع Artifact | لم تُنشأ ملفات في `artifacts/evidence/` | افتح `Collect evidence` وراجع خطوة الجمع و`run.log` قبل إعادة المحاولة |
+| `commentsDisabled` | التعليقات مغلقة للفيديو | اترك `skip_comments=false`؛ سيحفظ النظام metadata وcaptions ويسجل القيد |
+
+## أخطاء Gemini
 
 | الرسالة أو الحالة | السبب المحتمل | التصرف |
 |---|---|---|
 | `permission_denied` | مشروع Gemini غير مصرح له | لا تعِد المحاولات؛ أصلح صلاحية المشروع أو عطّل adapter |
 | HTTP 401/403 | مفتاح مفقود أو مشروع غير مصرح | تحقق من Secret دون طباعته، ثم راجع مشروع Google/AI Studio |
 | quota/rate limit | تجاوز الحصة | أوقف المسار واحفظ التقرير؛ لا تدوّر المفاتيح لتجاوز الحد |
-| JSON غير صالح | النموذج لم يلتزم بالعقد | احفظ الاستجابة المنقحة، أعد الطلب بإخراج schema مضبوط، ولا تستخدم النتيجة تلقائيًا |
+| JSON غير صالح | النموذج لم يلتزم بالعقد | لا تستخدم النتيجة؛ أعد التشغيل بنموذج يدعم JSON أو غيّر `GEMINI_MODEL`، وراجع رسالة `Gemini returned no valid JSON analysis` |
 
 ## أخطاء Git والأسرار
 
