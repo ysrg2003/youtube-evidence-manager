@@ -72,6 +72,26 @@ python -m src.evidence_cli VIDEO_ID --analyze
 
 في GitHub Actions، يُضاف `YOUTUBE_API_KEY` فقط إلى **Settings → Secrets and variables → Actions → Secrets**، وتُشغّل أي workflow خارجي يدويًا ومحدودًا. يجب إيقاف المسار عند `quotaExceeded` بدل تدوير المفاتيح، وعدم رفع HTML خام أو أسرار أو captions غير منقحة كـ artifact.
 
+## تشغيل corpus المقالات الخمسين
+
+الـ workflow هو `.github/workflows/corpus.yml` واسمه **Collect corpus YouTube evidence**، ويعمل يدويًا فقط. يقرأ `testdata/corpus_manifest.json` الذي يربط كل مقال بعنوانه وقسمه وsubtitle وlabels واستعلامه.
+
+ابدأ بجولة محدودة من **Actions → Collect corpus YouTube evidence → Run workflow**:
+
+| Input | أول تشغيل مقترح | أثره |
+|---|---:|---|
+| `max_articles` | `1` أو `5` | عدد المقالات في الجولة |
+| `search_results` | `5` | المرشحون لكل مقال؛ كل بحث يستهلك حصة |
+| `max_comments` | `10` | حد التعليقات الرئيسية لكل فيديو |
+| `max_comment_pages` | `1` | حد صفحات التعليقات |
+| `skip_comments` | `false` | اجعله `true` عند الاكتفاء بـ metadata وcaptions |
+| `analyze` | `false` أولًا | لا تستخدم Gemini حتى تفحص evidence |
+| `resume` | `true` | يعيد استخدام العناصر المسجلة في state |
+
+يُحفظ `corpus_state.json` بعد كل مقال، ويُنتج `corpus_results.json` و`corpus_results.md`. لكل مقال مجلد `article_XXX/` يحوي evidence. إذا تعذر captions، تبقى metadata محفوظة وتصبح الحالة `partial`. إذا فشل Gemini بعد الجمع، تبقى evidence ويظهر `analysis_status=failed`. لا تستخدم إعادة التشغيل القسرية إلا بقرار واعٍ لأنها تعيد استهلاك الحصة.
+
+لا يكتب هذا المسار فوق ملفات المقالات ولا ينشر إلى Blogger. بعد تنزيل artifact، راجع `corpus_results.md`، ثم evidence ذات captions متاحة، ثم التحليلات الناجحة. اعتبر captions وكلام المتحدث والتعليقات أنواع أدلة مختلفة، ولا تنقل ادعاءً إلى المقال دون تحقق مستقل عندما يكون factual.
+
 ## التحقق من التشغيل الناجح
 
 | الفحص | علامة النجاح |

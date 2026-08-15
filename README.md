@@ -39,7 +39,10 @@
 | `docs/reuse-in-another-project.md` | دمج النظام في مشروع Python أو Node أو Go أو Workflow آخر |
 | `.env.example` | أسماء الأسرار مع placeholders فقط |
 | `.github/workflows/ci.yml` | compile واختبارات offline بلا أسرار أو quota |
-| `.github/workflows/evidence.yml` | تشغيل يدوي لجمع evidence وحفظ Artifacts |
+| `.github/workflows/evidence.yml` | تشغيل يدوي لجمع evidence لفيديو واحد وحفظ Artifacts |
+| `.github/workflows/corpus.yml` | تشغيل يدوي bounded لـ 50 مقالًا من `testdata/corpus_manifest.json` |
+| `src/corpus_evidence.py` | البحث عن فيديو مرشح لكل مقال، جمع evidence، وحفظ state قابلة للاستئناف |
+| `testdata/corpus_manifest.json` | mapping المقال: العنوان، القسم، subtitle، labels، واستعلام YouTube |
 | `LEGACY_TRANSLATOR_README.md` | توثيق الأداة القديمة كما كان |
 
 ## خريطة الاستخدام حسب الهدف
@@ -216,6 +219,16 @@ PY
 يمكن تشغيل النظام من GitHub دون فتح طرفية محلية. افتح **Actions → Collect YouTube evidence → Run workflow**، ثم أدخل رابط الفيديو أو معرّفه، وحدد حد التعليقات والصفحات، واختر `analyze` فقط إذا كان `GEMINI_API_KEY` محفوظًا في Secrets. يحتاج الـ Workflow إلى Secret باسم `YOUTUBE_API_KEY`، بينما `GEMINI_API_KEY` اختياري. بعد انتهاء التشغيل، نزّل artifact باسم قريب من `youtube-evidence-<run_id>` وستجد `evidence.json` و`evidence.md`، ومع التحليل `analysis.json` و`analysis.md`.
 
 > لا يرفع الـ Workflow أي فيديو أو ينشر إلى Blogger. وهو يدوي عمدًا حتى لا تُستهلك حصة YouTube دون قرار واضح.
+
+## تشغيل corpus المقالات الخمسين
+
+يعمل corpus workflow يدويًا فقط من **Actions → Collect corpus YouTube evidence → Run workflow**. يقرأ `testdata/corpus_manifest.json`، يبحث عن عدد محدود من النتائج لكل مقال، يختار المرشح الأعلى تطابقًا من العنوان والوصف، ثم يجمع metadata وcaptions وتعليقات عامة محدودة. لا يشغّل Reddit، ولا ينشر المقالات، ولا يكتب فوق ملفات المقالات.
+
+لأول تشغيل آمن، استخدم `max_articles=1` أو `5`، و`search_results=5`، و`max_comments=10`، و`max_comment_pages=1`، واجعل `analyze=false`. بعد فحص artifact، يمكن تشغيل دفعة أكبر. البحث يستهلك حصة YouTube لكل مقال، لذلك لا تستخدم `--no-resume` أو تعيد تشغيل corpus بلا سبب.
+
+الـ artifact يحتوي عادةً على `corpus_results.json` و`corpus_results.md`، وداخل كل `article_XXX/` ملفي `evidence.json` و`evidence.md`. إذا فعّلت `analyze=true` سيحاول Gemini تحليل bundle بعد حفظه؛ فشل Gemini لا يمحو evidence، ويظهر كـ `analysis_status=failed` في state.
+
+> هذه النتائج **تستكمل الأدلة ولا تعدّل المقالات أو تنشرها تلقائيًا**. كل caption أو كلام متحدث أو تعليق يبقى مصنفًا حسب مصدره ويحتاج مراجعة تحريرية قبل إدخاله في المقال النهائي.
 
 ## كيف تعمل الأدلة الآن؟
 

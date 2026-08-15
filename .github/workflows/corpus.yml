@@ -1,0 +1,118 @@
+name: Collect corpus YouTube evidence
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_articles:
+        description: "Number of article jobs to process"
+        required: false
+        default: "50"
+        type: string
+      search_results:
+        description: "Search candidates per article"
+        required: false
+        default: "5"
+        type: string
+      max_comments:
+        description: "Maximum top-level public comments per selected video"
+        required: false
+        default: "10"
+        type: string
+      max_comment_pages:
+        description: "Maximum comment API pages per selected video"
+        required: false
+        default: "1"
+        type: string
+      skip_comments:
+        description: "Skip public comments to reduce collection scope"
+        required: false
+        default: false
+        type: boolean
+      analyze:
+        description: "Run Gemini analysis for each collected evidence bundle"
+        required: false
+        default: false
+        type: boolean
+      resume:
+        description: "Resume items already recorded in the output state"
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: corpus-youtube-evidence-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  collect-corpus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Validate configuration
+        shell: bash
+        env:
+          ANALYZE: ${{ inputs.analyze }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${YOUTUBE_API_KEY:-}" ]]; then
+            echo "YOUTUBE_API_KEY is missing. Add it under repository Actions Secrets."
+            exit 1
+          fi
+          if [[ "$ANALYZE" == "true" && -z "${GEMINI_API_KEY:-}" ]]; then
+            echo "GEMINI_API_KEY is required when analyze=true."
+            exit 1
+          fi
+
+      - name: Run bounded corpus collection
+        shell: bash
+        env:
+          MAX_ARTICLES: ${{ inputs.max_articles }}
+          SEARCH_RESULTS: ${{ inputs.search_results }}
+          MAX_COMMENTS: ${{ inputs.max_comments }}
+          MAX_COMMENT_PAGES: ${{ inputs.max_comment_pages }}
+          SKIP_COMMENTS: ${{ inputs.skip_comments }}
+          ANALYZE: ${{ inputs.analyze }}
+          RESUME: ${{ inputs.resume }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/corpus-evidence
+          args=(
+            --manifest testdata/corpus_manifest.json
+            --output-dir artifacts/corpus-evidence
+            --max-articles "$MAX_ARTICLES"
+            --search-results "$SEARCH_RESULTS"
+            --max-comments "$MAX_COMMENTS"
+            --max-comment-pages "$MAX_COMMENT_PAGES"
+          )
+          if [[ "$SKIP_COMMENTS" == "true" ]]; then args+=(--skip-comments); fi
+          if [[ "$ANALYZE" == "true" ]]; then args+=(--analyze); fi
+          if [[ "$RESUME" != "true" ]]; then args+=(--no-resume); fi
+          python -m src.corpus_evidence "${args[@]}" 2>&1 | tee artifacts/corpus-evidence/run.log
+
+      - name: Upload corpus artifacts
+        if: ${{ always() && hashFiles('artifacts/corpus-evidence/**') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-corpus-evidence-${{ github.run_id }}
+          path: artifacts/corpus-evidence/
+          if-no-files-found: error
+          retention-days: 14
